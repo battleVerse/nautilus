@@ -1,0 +1,4 @@
+Name: Interactive Nautilus
+Description: Graphical interface for Nautilus
+Binding: nautilus_interface
+Interactive: true

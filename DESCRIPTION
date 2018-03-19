@@ -1,0 +1,34 @@
+Package: nautilus
+Type: Package
+Title: Automated track-to-truth assignment for sensor performance analysis
+Version: 1.2
+Date: 2018-03-19
+Authors@R: c(
+  person('Benjamin','Ashwell',email='bashwell@ida.org',role=c('cre','aut')),
+  person('Kevin','Kirshenbaum',email='kkirshen@ida.org',role=c('aut'))
+  )
+Description: Compare Sensor Data to Truth Data
+License: Proprietary
+LazyData: TRUE
+RoxygenNote: 6.0.1
+Depends:
+    R (>= 3.0.2),
+    dplyr (>= 0.7)
+Imports:
+    ggplot2,
+    shiny,
+    data.table,
+    parallel,
+    plotly,
+    gridExtra,
+    doParallel,
+    tidyr,
+    DT,
+    foreach,
+    geosphere,
+    forcats,
+    miniUI,
+    rintrojs,
+    viridis,
+    scenarioMaker (>= 0.2)
+Suggests: testthat

@@ -1,0 +1,122 @@
+#' NAUTILUS: A package for analyzing sensor system performance
+#'
+#' Hello, and welcome to NAUTILUS!
+#' NAUTILUS is an R package designed to help you analyze sensor system peformance by comparing the sensor-determined positions of targets to the true
+#' (GPS-determined) positions. The overall goal of NAUTILUS is to provide a simple, flexible, and transparent way to explore sensor performance
+#' and help answer a wide range of different questions in ways that are easy to explain to others. NAUTILUS is intended for exploratory analysis,
+#' rather than rigorous evaluation of radar performance metrics.
+#'
+#' @section Nautilus Input Formats:
+#'
+#' \strong{truthData} data frame containing all of the truth data for each target (likely from GPS or land-based radar systems). MUST have the following columns:
+#' \itemize{
+#'  \item{time: (double) time of measurement. We currently recommend POSIX}
+#'  \item{lon: (double) longitude of target at time of measurement}
+#'  \item{lat: (double) latitude of target at time of measurement}
+#'  \item{alt: (double) altitude of target at time of measurement}
+#'  \item{truthID: (factor) name or identifier for target. We recommend letters or names}
+#'  \item{heading: (double) target heading in degrees azimuth}
+#'}
+#'
+#' \strong{sensorData}: data frame containing each sensor point for all of the tracks. MUST have the following columns:
+#' \itemize{
+#'  \item{time: (double) time of measurement. We currently recommend POSIX}
+#'  \item{lon: (double) longitude of target at time of measurement}
+#'  \item{lat: (double) latitude of target at time of measurement}
+#'  \item{alt: (double) altitude of target at time of measurement}
+#'  \item{trackNum: (factor) identifier for the track. We recommend numbers for each unique track returned by the sensor system}
+#'  }
+#'
+#' \strong{ownShipData}: data frame containing all of the truth position of the sensor system (likely from GPS or land-based radar systems). This may be ownship if testing something on a ship or the lat/lon position of a stationary ststem. MUST have the following columns:
+#' \itemize{
+#'  \item{time: (double) time of measurement. We currently recommend POSIX}
+#'  \item{lon: (double) longitude of target at time of measurement}
+#'  \item{lat: (double) latitude of target at time of measurement}
+#'  \item{alt: (double) altitude of target at time of measurement}
+#'  \item{truthID: (factor) name or identifier for target. We recommend letters or names}
+#'  \item{heading: (double) sensor system heading in degrees azimuth}
+#'}
+#'
+# There are several 'helper' functions designed to help you convert your data into the lat/lon/alt format Nautilus requires:
+# \itemize{
+# \item{\code{\link{transform_offset_to_latlon}} Converts data in a north/east/up format (measured from the sensor) to lat/lon/alt}
+# \item{\code{\link{transform_bearing_range_to_latlon}} Converts data in a bearing/range/up format (measured from the sensor) to lat/lon/alt}
+# \item{\code{\link{transform_sensor_bias}} Intended for when sensor systems have a systematic bias in bearing, range, or altitude.  Changes lon/lat/alt positions of sensor points based on user-specified amounts.}
+# \item{\code{\link{get_heading}} Estimates heading of target or ownship}
+# }
+
+#'
+#'@section Track-to-Truth Association:
+#'The primary purpose of Nautilus is to associate track to truth data, which is done in two steps:
+#'\enumerate{
+#'\item{\code{\link{target_track_distance}}(truthData, sensorData,ownShipData)}
+#'\item{\code{\link{target_assignment}}(method, cutoff, ...)}
+#'}
+#'with the output of the first piped into the second. The choices of 'mode' in \code{\link{target_assignment}} are:
+#' \itemize{
+#'  \item{"point": point method of target assignment. Calls target_assignment.point().  Requires additional parameters "cutoff"}
+#'  \item{"wholeTrack": whole track method of target assignment. Calls target_assignment.track().  Requires additional parameters "cutoff"}
+#'  \item{"windowSquare": square window method of target assignment. Calls target_assignment.window(), requires additional parameters "cutoff" and "windowSize"}
+#'  \item{"windowGauss": Gaussian window method of target assignment. Calls target_assignment.gauss().  Requires additional parameters "cutoff" and "windowSize"}
+#'  \item{"user": user-specified method of target assignment. Calls target_assignment.user().  Requires additional parameters "userAssignedVector"}
+#' }
+#'
+#' For many reasons users may want to run target_assignment() twice.  In that case, see \code{\link{target_assignment_secondpass}}
+#'
+#'
+#'The ouput of target_assignment is a dataframe with the following columns:
+#' \itemize{
+#'  \item{lonError: difference in longitude between the sensor point and assigned target at the time of the sensor point}
+#'  \item{latError: difference in latitude between the sensor point and assigned target at the time of the sensor point}
+#'  \item{altError: difference in altitude between the sensor point and assigned target at the time of the sensor point}
+#'  \item{bearingToTarget: bearing (azimuth) to target from ownship at the time of the sensor point}
+#'  \item{trackNum: the track number associated with this sensor data point}
+#'  \item{tgtAssigned: the ID of the target assigned to this sensor point}
+#'  \item{locationError: distance between sensor point and target at the given time}
+#'  \item{pointIndex: index referring to which of the original sensor data points this target-track pair refers. Necessary for comparisons in target_assignment()}
+#'  \item{time: the time that this sensor point was recorded}
+#'  \item{bearingError: difference in bearing between the sensor point and target at the time of the sensor point}
+#'  \item{downrangeError: difference in range to ownship between the sensor point and target}
+#'  \item{lon: longitude of the sensor point}
+#'  \item{lat: latitude of the sensor point}
+#'  \item{alt: altitude of the sensor point}
+#'  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
+#'  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
+#'  \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+#'  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
+#'  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
+#'  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}
+#'  }
+#'
+#' @section Plotting Functions:
+#' Nautilus has a wide array of plotting functions:
+#' \itemize{
+#' \item{ \code{\link{plot_compare_track_status}} }
+#' \item{ \code{\link{plot_coverage_by_target}} }
+#' \item{ \code{\link{plot_distance_data}} }
+#' \item{ \code{\link{plot_distance_data_plotly}} }
+#' \item{ \code{\link{plot_error}} }
+#' \item{ \code{\link{plot_overall_coverage}} }
+#' \item{ \code{\link{plot_polar_error}} }
+#' \item{ \code{\link{plot_scatterplot_with_density}} }
+#' \item{ \code{\link{plot_target_assignments}} }
+#' \item{ \code{\link{plot_target_assignments_plotly}} }
+#' \item{ \code{\link{plot_track_status}} }
+#' \item{ \code{\link{plot_track_status_plotly}} }
+#' \item{ \code{\link{plot_tracks_per_target}} }
+#' \item{ \code{\link{plot_truth_data}} }
+#' \item{ \code{\link{plot_truth_data_plotly}} }
+#' \item{ \code{\link{plot_truth_gaps}} }
+#' }
+#'
+#' @section Summary Table Functions:
+#' Nautilus has several functions that return helpful tables of information:
+#' \itemize{
+#' \item{ \code{\link{summarize_performance}} }
+#' \item{ \code{\link{summarize_time_tracked}} }
+#' }
+#'
+#' @docType package
+#' @name nautilus
+
+NULL
