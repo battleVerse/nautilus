@@ -1001,7 +1001,7 @@ nautilus_interface = function() {
                 paste(input$runName,' - ',input$tableType,".csv",sep='')
             },
             content = function(file) {
-                write.csv(values$dataTable,file, row.names=FALSE)
+                utils::write.csv(values$dataTable,file, row.names=FALSE)
             }
         )
 

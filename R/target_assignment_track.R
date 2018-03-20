@@ -34,7 +34,7 @@
 #'  \item{alt: altitude of the sensor point}
 #'  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
 #'  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
-#'  \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+#'  \item{meanLocationError: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
 #'  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
 #'  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
 #'  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}
@@ -64,7 +64,7 @@ target_assignment.track <- function(targetTrackDistance, cutoff){
         closestTargets <- targetTrackDistance %>%
                 group_by(trackNum, truthID) %>%
                 # get the average location error for each ENTIRE track against each truth target
-                summarise(meanlocation = mean(locationError,na.rm=TRUE),
+                summarise(meanLocationError = mean(locationError,na.rm=TRUE),
                           locationError = mean(locationError,na.rm=TRUE),  # for use in get_isFalseTrack()
                           downrangeError = mean(abs(downrangeError),na.rm=TRUE),
                           bearingError = mean(abs(bearingError),na.rm=TRUE),
@@ -72,7 +72,7 @@ target_assignment.track <- function(targetTrackDistance, cutoff){
                 ungroup() %>%
                 group_by(trackNum) %>%
                 # pull out the target with the smallest location error for each track/target pairing
-                slice(which.min(meanlocation)) %>%
+                slice(which.min(meanLocationError)) %>%
                 ungroup()
 
         # add the isFalseTrack column, default is false

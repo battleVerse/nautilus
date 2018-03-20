@@ -30,12 +30,12 @@ get_tracks_per_target= function(assignmentData,truthData=NULL){
         # get start and stop times for each segment
         summarise(stopTime = max(time), startTime = min(time)) %>%
         ungroup() %>%
-        tidyr::gather('event', 'time', c(stopTime, startTime)) %>%
+        tidyr::gather('trackEvent', 'time', c(stopTime, startTime)) %>%
         # put in chronological order (with startTime before stopTime in case there is a single point)
-        arrange(time, event) %>%
+        arrange(time, trackEvent) %>%
         group_by(tgtAssigned) %>%
         #go through the list - every time a new track shows up, +1, every time one goes away, -1
-        mutate(numTracksOnTarget=cumsum(ifelse(event=="startTime",1,-1))) %>%
+        mutate(numTracksOnTarget=cumsum(ifelse(trackEvent=="startTime",1,-1))) %>%
         # recombine with data (each time there was a measurement x number of tgts) to fill out the graph
         right_join(allTimes) %>%
         arrange(tgtAssigned, time) %>%

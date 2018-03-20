@@ -17,5 +17,8 @@ Figure that shows which sensor points were assigned to which targets.  Thin line
  Plotly figures are interactive, and users can zoom in, hover over data points for more info, and click to hide tracks or targets.
 }
 \examples{
-plot_target_assignments_plotly(scenarioMaker::example1_scenario \%>\% target_assignment("point",cutoff=100))
+myScenario=scenarioMaker::example1_scenario \%>\%
+ target_assignment("point",cutoff=100)
+
+plot_target_assignments_plotly(myScenario)
 }

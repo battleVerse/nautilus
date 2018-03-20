@@ -30,7 +30,7 @@
 #'  \item{alt: altitude of the sensor point}
 #'  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
 #'  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
-#'  \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+#'  \item{meanLocationError: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
 #'  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
 #'  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
 #'  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}

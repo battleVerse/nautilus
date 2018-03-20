@@ -26,7 +26,14 @@
 #' @export
 #'
 #' @examples
-#' plot_polar_error(scenarioMaker::example1_scenario %>% target_assignment("point",cutoff=100),angleTerm="bearing", rTerm = 'locationError',doFacet = TRUE, plotFalseTracks=FALSE)
+#' myScenario=scenarioMaker::example1_scenario %>%
+#'   target_assignment("point",cutoff=100)
+#'
+#' plot_polar_error(scenario=myScenario,
+#'  angleTerm="bearing",
+#'  rTerm = 'locationError',
+#'  doFacet = TRUE,
+#'  plotFalseTracks=FALSE)
 
 
 # a few functions to help with plotting
@@ -42,7 +49,7 @@ plot_polar_error = function(scenario,angleTerm="bearing", rTerm="locationError",
     assignmentData=scenario$assignmentData
 
     newData=data.frame(x=rep(1,nrow(assignmentData)),y=rep(1,nrow(assignmentData)),
-                       colorBy=rep(1,nrow(assignmentData)),isFalseTrack=assignmentData$isFalseTrack)
+                       colorDataBy=rep(1,nrow(assignmentData)),isFalseTrack=assignmentData$isFalseTrack)
 
 
 
@@ -68,24 +75,24 @@ plot_polar_error = function(scenario,angleTerm="bearing", rTerm="locationError",
     }
 
     if (colorTerm=="trackNum"){
-        newData$colorBy=assignmentData$trackNum
+        newData$colorDataBy=assignmentData$trackNum
         keyTitle="Track Number"
     } else if (colorTerm=="tgtAssigned"){
-        newData$colorBy=assignmentData$tgtAssigned
+        newData$colorDataBy=assignmentData$tgtAssigned
         keyTitle="Target ID"
     }
 
     graphTitle=sprintf("%s vs %s",title,title2)
 
     myPlot=ggplot(data = filter(newData, isFalseTrack == FALSE),
-                  aes(x = x, y = y, color = colorBy)) +
+                  aes(x = x, y = y, color = colorDataBy)) +
         guides(colour=guide_legend(title=keyTitle))+
         geom_point(alpha = 0.3) + coord_polar(theta = 'x', start = (0)) +
         scale_x_continuous(limits=c(0, 360), breaks=c(0, 45, 90, 135, 180, 225, 270, 315)) +
         xlab('') + ylab(title) + ggtitle(graphTitle)
 
     if (doFacet==TRUE){
-        myPlot=myPlot+facet_wrap(~colorBy)
+        myPlot=myPlot+facet_wrap(~colorDataBy)
     }
 
     if (plotFalseTracks==TRUE){

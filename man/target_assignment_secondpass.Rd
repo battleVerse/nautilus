@@ -7,6 +7,8 @@
 target_assignment_secondpass(scenario, method, excludeFirstPass = FALSE, ...)
 }
 \arguments{
+\item{scenario}{scenario must contain the output of target_track_assignment() (the result of the first pass)}
+
 \item{method}{string specifying which subfunction to call. Options include:
 \itemize{
  \item{"point": point method of target assignment. Calls target_assignment.point().  Requires additional parameters "cutoff".  See \code{\link{target_assignment.point}} for additional details}
@@ -19,12 +21,6 @@ target_assignment_secondpass(scenario, method, excludeFirstPass = FALSE, ...)
 \item{excludeFirstPass}{(Default = FALSE) determines whether to include the false tracks from the first pass in the final data frame.}
 
 \item{...}{additional commands to be passed to each subfunction ( target.assignment.XXXXX() ). For example, all of the subfunctions require a cutoff parameter and the tho window methods (method = "windowSquare" or "windowGauss") each require the window size (windowSize) to be specified.  See \code{\link{target_assignment}} for addiitonal details.}
-
-\item{assignmentData}{the output of target_track_assignment() (the result of the first pass)}
-
-\item{truthData}{the data frame containing the true positions of the targets.  This is the same data frame used during the first pass}
-
-\item{ownShipData}{the data frame containing the true position of the sensor system.  This is the same data frame used during the first pass}
 }
 \value{
 A data frame with the same number of observations as the sensor data that was originally passed to target_track_distance(). Each sensor point in the original data set has been assigned to a target using the method specified by the user, and the output data provides the following summary statistics:
@@ -45,7 +41,7 @@ A data frame with the same number of observations as the sensor data that was or
  \item{alt: altitude of the sensor point}
  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
- \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+ \item{meanLocationError: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}
@@ -61,16 +57,23 @@ The first pass should properly be a faster method to properly take advantage of 
 \examples{
 
 
-# Example 1: speeding up the gaussian window method by eliminating some false tracks in the first pass
+# Example 1: speeding up the gaussian window method by
+# eliminating some false tracks in the first pass
 
-    target_assignment(scenario=scenarioMaker::example1_scenario, method = 'point', cutoff = 300) \%>\%
-    target_assignment_secondpass(method = 'windowGauss', cutoff = 100, windowSize = 30)
+    target_assignment(scenario=scenarioMaker::example2_scenario,
+     method = 'point', cutoff = 300) \%>\%
+    target_assignment_secondpass(method = 'windowGauss',
+     cutoff = 100, windowSize = 30)
 
 
+# Example 2: Removing all whole tracks that are false tracks
+# and keeping all of the data points for tracks that are not
+# false tracks.  In the second pass, a large cutoff prevents
+# any further points from being removed while allowing for
+# tracks to switch targets
 
-# Example 2: Removing all whole tracks that are false tracks and keeping all of the data points for tracks that are not false tracks.  In the second pass, a large cutoff prevents any further points from being removed while allowing for tracks to switch targets
-
-    target_assignment(scenario=scenarioMaker::example1_scenario, method = 'wholeTrack', cutoff = 200) \%>\%
-    target_assignment_secondpass(method = 'windowGauss', cutoff = 5000, windowSize = 30)
-
+    target_assignment(scenario=scenarioMaker::example2_scenario,
+     method = 'wholeTrack', cutoff = 200) \%>\%
+    target_assignment_secondpass(method = 'windowGauss',
+     cutoff = 5000, windowSize = 30)
 }

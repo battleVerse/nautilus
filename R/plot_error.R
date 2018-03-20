@@ -27,7 +27,14 @@
 #' @export
 #'
 #' @examples
-#' plot_error(scenarioMaker::example1_scenario %>% target_assignment("point",cutoff=100), rangeCutoff=2000, xTerm="rangeToShip", yTerm="locationError", colorTerm="tgtAssigned")
+#' myScenario=scenarioMaker::example1_scenario %>%
+#'  target_assignment("point",cutoff=100)
+#'
+#' plot_error(scenario=myScenario,
+#'  rangeCutoff=2000,
+#'  xTerm="rangeToShip",
+#'  yTerm="locationError",
+#'  colorTerm="tgtAssigned")
 
 
 # a few functions to help with plotting
@@ -43,7 +50,7 @@ plot_error = function(scenario,rangeCutoff,xTerm = "rangeToShip", yTerm = "locat
     assignmentData=scenario$assignmentData
 
     newData=data.frame(x=rep(1,nrow(assignmentData)),y=rep(1,nrow(assignmentData)),
-                       colorBy=rep(1,nrow(assignmentData)),isFalseTrack=assignmentData$isFalseTrack)
+                       colorDataBy=rep(1,nrow(assignmentData)),isFalseTrack=assignmentData$isFalseTrack)
 
 
     if (xTerm == "rangeToShip" || tolower(xTerm) == "range to ship"){
@@ -69,15 +76,15 @@ plot_error = function(scenario,rangeCutoff,xTerm = "rangeToShip", yTerm = "locat
     }
 
     if (colorTerm=="trackNum"){
-        newData$colorBy=assignmentData$trackNum
+        newData$colorDataBy=assignmentData$trackNum
         title="Track Number"
     } else if (colorTerm=="tgtAssigned"){
-        newData$colorBy=assignmentData$tgtAssigned
+        newData$colorDataBy=assignmentData$tgtAssigned
         title="Truth ID"
     }
 
     myPlot=ggplot(data = filter(newData, isFalseTrack == FALSE),
-                  aes(x = x,y = y, colour = colorBy))+
+                  aes(x = x,y = y, colour = colorDataBy))+
         geom_point()+
         guides(colour=guide_legend(title=title))+
         labs(x = xLabel, y = yLabel)
@@ -91,7 +98,7 @@ plot_error = function(scenario,rangeCutoff,xTerm = "rangeToShip", yTerm = "locat
     }
 
     if (doFacet==TRUE){
-        myPlot=myPlot+facet_wrap(~colorBy)
+        myPlot=myPlot+facet_wrap(~colorDataBy)
     }
 
     return(myPlot)

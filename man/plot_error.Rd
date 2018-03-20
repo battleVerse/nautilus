@@ -40,5 +40,12 @@ ggplot object
 This figure plots one of several choices for system error (location error, range error, bearing error) against time or range.  Can be split by target assigned or track number.
 }
 \examples{
-plot_error(scenarioMaker::example1_scenario \%>\% target_assignment("point",cutoff=100), rangeCutoff=2000, xTerm="rangeToShip", yTerm="locationError", colorTerm="tgtAssigned")
+myScenario=scenarioMaker::example1_scenario \%>\%
+ target_assignment("point",cutoff=100)
+
+plot_error(scenario=myScenario,
+ rangeCutoff=2000,
+ xTerm="rangeToShip",
+ yTerm="locationError",
+ colorTerm="tgtAssigned")
 }

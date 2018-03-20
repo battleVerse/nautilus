@@ -42,7 +42,7 @@ summarize_time_tracked=function(scenario){
         # pull out the data for this target
         thisTarget=filter(trackStartStop,tgtAssigned==target)
         # find any overlaps resulting from multiple tracks simultaneously tracking the same target
-        overlaps=nautilus:::find_overlaps(startList=unlist(thisTarget$startTime),stopList=unlist(thisTarget$stopTime))
+        overlaps=find_overlaps(startList=unlist(thisTarget$startTime),stopList=unlist(thisTarget$stopTime))
         tempOverlapList[[i]]=data.frame(tgt=target,startTime=overlaps[[1]],stopTime=overlaps[[2]],totalSegments=max(thisTarget$segPerTgt))
         i=i+1
     }

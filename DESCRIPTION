@@ -7,8 +7,9 @@ Authors@R: c(
   person('Benjamin','Ashwell',email='bashwell@ida.org',role=c('cre','aut')),
   person('Kevin','Kirshenbaum',email='kkirshen@ida.org',role=c('aut'))
   )
-Description: Compare Sensor Data to Truth Data
-License: Proprietary
+Description: Automated track-to-truth assignment for sensor performance analysis.
+License: GPL-3
+Copyright: Institute for Defense Analyses
 LazyData: TRUE
 RoxygenNote: 6.0.1
 Depends:
@@ -32,3 +33,5 @@ Imports:
     viridis,
     scenarioMaker (>= 0.2)
 Suggests: testthat
+URL: https://github.com/battleVerse/nautilus
+BugReports: https://github.com/battleVerse/nautilus/issues

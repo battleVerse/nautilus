@@ -38,7 +38,7 @@
 #'  \item{alt: altitude of the sensor point}
 #'  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
 #'  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
-#'  \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+#'  \item{meanLocationError: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
 #'  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
 #'  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
 #'  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}
@@ -100,23 +100,23 @@ target_assignment.gauss <- function(targetTrackDistance, cutoff, windowSize, par
                 filter(trackNum == current_track) %>%
                 # regroup (not just to be careful, it might need it after using select() and filter())
                 # get the weighted average location error for all sensor points in the window against each truth target
-                mutate(weights = dnorm(time, mean = this_time, sd = windowSize)) %>%
-                summarise(meanlocation = weighted.mean(locationError, weights, na.rm=TRUE),
-                          downrangeError = weighted.mean(abs(downrangeError),weights, na.rm=TRUE),#for use in get_isFalseTrack()
-                          bearingError = weighted.mean(abs(bearingError), weights, na.rm=TRUE),
-                          altError = weighted.mean(abs(altError), weights, na.rm=TRUE)) %>%
+                mutate(gaussWeights = stats::dnorm(time, mean = this_time, sd = windowSize)) %>%
+                summarise(meanLocationError = stats::weighted.mean(locationError, gaussWeights, na.rm=TRUE),
+                          downrangeError = stats::weighted.mean(abs(downrangeError),gaussWeights, na.rm=TRUE),#for use in get_isFalseTrack()
+                          bearingError = stats::weighted.mean(abs(bearingError), gaussWeights, na.rm=TRUE),
+                          altError = stats::weighted.mean(abs(altError), gaussWeights, na.rm=TRUE)) %>%
                 ungroup() %>%
                 # pull out the target with the smallest location error for each track/target pairing
-                slice(which.min(meanlocation))
+                slice(which.min(meanLocationError))
 
             closest_target <- as.character(closest_in_window$truthID)
-            targetRMS = as.double(closest_in_window$meanlocation)
+            targetRMS = as.double(closest_in_window$meanLocationError)
             downrangeErrormean <- as.double(closest_in_window$downrangeError)
             bearingErrormean <- as.double(closest_in_window$bearingError)
             altErrormean <- as.double(closest_in_window$altError)
 
             data.frame(pointIndex = i, closestID = closest_target,
-                       meanlocation = targetRMS, locationError = targetRMS,
+                       meanLocationError = targetRMS, locationError = targetRMS,
                        downrangeError = downrangeErrormean, bearingError = bearingErrormean,
                        altError = altErrormean)
 
@@ -159,24 +159,24 @@ target_assignment.gauss <- function(targetTrackDistance, cutoff, windowSize, par
                 filter(trackNum == current_track) %>%
                 # regroup (not just to be careful, it might need it after using select() and filter())
                 # get the weighted average location error for all sensor points in the window against each truth target
-                mutate(weights = dnorm(time, mean = this_time, sd = windowSize)) %>%
-                summarise(meanlocation = weighted.mean(locationError, weights, na.rm=TRUE),
-                          downrangeError = weighted.mean(abs(downrangeError),weights, na.rm=TRUE),#for use in get_isFalseTrack()
-                          bearingError = weighted.mean(abs(bearingError), weights, na.rm=TRUE),
-                          altError = weighted.mean(abs(altError), weights, na.rm=TRUE)) %>%
+                mutate(gaussWeights = stats::dnorm(time, mean = this_time, sd = windowSize)) %>%
+                summarise(meanLocationError = stats::weighted.mean(locationError, gaussWeights, na.rm=TRUE),
+                          downrangeError = stats::weighted.mean(abs(downrangeError),gaussWeights, na.rm=TRUE),#for use in get_isFalseTrack()
+                          bearingError = stats::weighted.mean(abs(bearingError), gaussWeights, na.rm=TRUE),
+                          altError = stats::weighted.mean(abs(altError), gaussWeights, na.rm=TRUE)) %>%
                 ungroup() %>%
                 # pull out the target with the smallest location error for each track/target pairing
-                slice(which.min(meanlocation))
+                slice(which.min(meanLocationError))
 
             closest_target[i] <- as.character(closest_in_window$truthID)
-            targetRMS[i] = as.double(closest_in_window$meanlocation)
+            targetRMS[i] = as.double(closest_in_window$meanLocationError)
             downrangeErrormean[i] <- as.double(closest_in_window$downrangeError)
             bearingErrormean[i] <- as.double(closest_in_window$bearingError)
             altErrormean[i] <- as.double(closest_in_window$altError)
         }
 
         targets_df <- data.frame(pointIndex = pointIDList, closestID = closest_target,
-                                 meanlocation = targetRMS, locationError = targetRMS,
+                                 meanLocationError = targetRMS, locationError = targetRMS,
                                  downrangeError = downrangeErrormean, bearingError = bearingErrormean,
                                  altError = altErrormean)
     }

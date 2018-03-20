@@ -12,7 +12,10 @@
 #' @export
 #'
 #' @examples
-#' plot_target_assignments_plotly(scenarioMaker::example1_scenario %>% target_assignment("point",cutoff=100))
+#' myScenario=scenarioMaker::example1_scenario %>%
+#'  target_assignment("point",cutoff=100)
+#'
+#' plot_target_assignments_plotly(myScenario)
 
 
 # a few functions to help with plotting

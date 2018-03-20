@@ -4,15 +4,15 @@
 \alias{plot_compare_track_status}
 \title{Compares the track status from different assignmentDatas}
 \usage{
-plot_compare_track_status(assignmentDataList, nameList, truthData,
+plot_compare_track_status(scenario1, scenario2, nameList = NA,
   showFalseTracks = FALSE)
 }
 \arguments{
-\item{assignmentDataList}{list of two assignmentData dataframes (the output of target_assignment())}
+\item{scenario1}{must contain track-to-truth assignments (the output of target_assignment()) and truthData}
 
-\item{nameList}{list of two names for plotting (in the same order as assignmentDataList)}
+\item{scenario2}{must contain track-to-truth assignments (the output of target_assignment()) and truthData}
 
-\item{truthData}{truthData used in creating assignmentData sets}
+\item{nameList}{title of each scenario in a list, (default = the scenario names)}
 
 \item{showFalseTracks}{will plot false tracks for comparison (default=FALSE)}
 }
@@ -23,7 +23,16 @@ ggplot object
 This figure compares the target assignments from two methods.  Each subfigure is similar to plot_track_status().  Areas of disagreement between the two methods are shown in bold.  If there are differences in points flagged as false tracks they are shown as triangles.
 }
 \examples{
-pointScenario=scenarioMaker::example1_scenario \%>\% target_assignment("point",cutoff=100)
-gaussScenario=scenarioMaker::example1_scenario \%>\% target_assignment("windowGauss",cutoff=100, window=10)
-plot_compare_track_status(list(pointScenario$assignmentData, gaussScenario$assignmentData),list("Point Method", "Gauss Window Method"), scenarioMaker::example1_scenario$targetTruth)
+\dontrun{
+pointScenario=scenarioMaker::example2_scenario \%>\%
+ target_assignment("point",cutoff=100)
+
+gaussScenario=scenarioMaker::example2_scenario \%>\%
+ target_assignment("windowGauss",cutoff=100, window=10)
+
+plot_compare_track_status(scenario1 = pointScenario,
+  scenario2 = gaussScenario,
+  nameList = list("Point Method", "Gauss Window Method"),
+  showFalseTracks = FALSE)
+  }
 }

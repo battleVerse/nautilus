@@ -2,9 +2,9 @@
 #'
 #' @description This figure compares the target assignments from two methods.  Each subfigure is similar to plot_track_status().  Areas of disagreement between the two methods are shown in bold.  If there are differences in points flagged as false tracks they are shown as triangles.
 #'
-#' @param assignmentDataList list of two assignmentData dataframes (the output of target_assignment())
-#' @param nameList list of two names for plotting (in the same order as assignmentDataList)
-#' @param truthData truthData used in creating assignmentData sets
+#' @param scenario1 must contain track-to-truth assignments (the output of target_assignment()) and truthData
+#' @param scenario2 must contain track-to-truth assignments (the output of target_assignment()) and truthData
+#' @param nameList title of each scenario in a list, (default = the scenario names)
 #' @param showFalseTracks will plot false tracks for comparison (default=FALSE)
 #'
 #' @import ggplot2 scenarioMaker
@@ -14,19 +14,47 @@
 #' @export
 #'
 #' @examples
-#' pointScenario=scenarioMaker::example1_scenario %>% target_assignment("point",cutoff=100)
-#' gaussScenario=scenarioMaker::example1_scenario %>% target_assignment("windowGauss",cutoff=100, window=10)
-#' plot_compare_track_status(list(pointScenario$assignmentData, gaussScenario$assignmentData),list("Point Method", "Gauss Window Method"), scenarioMaker::example1_scenario$targetTruth)
+#' \dontrun{
+#' pointScenario=scenarioMaker::example2_scenario %>%
+#'  target_assignment("point",cutoff=100)
+#'
+#' gaussScenario=scenarioMaker::example2_scenario %>%
+#'  target_assignment("windowGauss",cutoff=100, window=10)
+#'
+#' plot_compare_track_status(scenario1 = pointScenario,
+#'   scenario2 = gaussScenario,
+#'   nameList = list("Point Method", "Gauss Window Method"),
+#'   showFalseTracks = FALSE)
+#'   }
 
 
 # a few functions to help with plotting
 
 #user facing
 
-plot_compare_track_status = function(assignmentDataList, nameList, truthData, showFalseTracks = FALSE){
-    #approved for non-scenario input
+plot_compare_track_status = function(scenario1, scenario2, nameList = NA, showFalseTracks = FALSE){
+
+    #browser()
+    if  (!("assignmentData" %in% names(scenario1))){ #if assignmentData hasn't been created
+        stop("Your input for scenario1 does not contain target assignments - have you run target_assignments() yet?")
+    }
+    if  (!("assignmentData" %in% names(scenario2))){ #if assignmentData hasn't been created
+        stop("Your input for scenario2 does not contain target assignments - have you run target_assignments() yet?")
+    }
+
+    if (!is.data.frame(scenario1$targetTruth)){ #if targetTruth isn't present
+        stop("Scenario1 is missing targetTruth data, though assignmentData exists. This shouldn't be possible.")
+    }
+
     tracksPerTargetTmp=list()
     falseTrackList=list()
+
+    if (is.na(nameList)){
+        nameList=list(scenario1$scenarioName,scenario2$scenarioName)
+    }
+
+    truthData=scenario1$targetTruth
+    assignmentDataList=list(scenario1$assignmentData, scenario2$assignmentData)
 
     for (i in (1:length(assignmentDataList))) { #go through both inputs, get track coverage, combine them
 
@@ -45,16 +73,16 @@ plot_compare_track_status = function(assignmentDataList, nameList, truthData, sh
     }
 
     coverageData=do.call(rbind,tracksPerTargetTmp) #make into single dataframe
-    dupRows=scenarioMaker::get_dups_between_groups(coverageData,"sourceName") #figure out which rows are duplicates
-    agreementData=cbind(coverageData, dup=dupRows) #mark duplicates as TRUE
+    isDupRows=scenarioMaker::get_dups_between_groups(coverageData,"sourceName") #figure out which rows are isDuplicates
+    agreementData=cbind(coverageData, isDup=isDupRows) #mark isDuplicates as TRUE
 
     falseTrackData=do.call(rbind, falseTrackList)
-    dupRows=scenarioMaker::get_dups_between_groups(falseTrackData,"sourceName")
-    falseTrackComparison=cbind(falseTrackData,dup=dupRows)
+    isDupRows=scenarioMaker::get_dups_between_groups(falseTrackData,"sourceName")
+    falseTrackComparison=cbind(falseTrackData,isDup=isDupRows)
 
     myPlot=ggplot(agreementData)+
-        geom_point(data=filter(agreementData, dup=="TRUE"),aes(x=lon,y=lat,group=truthID,color=numTracksOnTarget),size=.75)+
-        geom_point(data=filter(agreementData, dup=="FALSE"),aes(x=lon,y=lat,group=truthID,color=numTracksOnTarget),size=2.5)+
+        geom_point(data=filter(agreementData, isDup=="TRUE"),aes(x=lon,y=lat,group=truthID,color=numTracksOnTarget),size=.75)+
+        geom_point(data=filter(agreementData, isDup=="FALSE"),aes(x=lon,y=lat,group=truthID,color=numTracksOnTarget),size=2.5)+
         scale_color_manual(values=c("red", "blue", "yellow"), name = "Tracks on Target", labels=c("None","One","Multiple"))+
         geom_path(data=truthData,aes(x=lon,y=lat,group=truthID))+
         xlab("Longitude")+ylab("Latitude")+
@@ -63,7 +91,7 @@ plot_compare_track_status = function(assignmentDataList, nameList, truthData, sh
 
     if (showFalseTracks == TRUE) {
         myPlot=myPlot+
-            geom_point(data=falseTrackComparison, aes(x=lon,y=lat, shape=dup,size=dup,alpha=dup))+
+            geom_point(data=falseTrackComparison, aes(x=lon,y=lat, shape=isDup,size=isDup,alpha=isDup))+
             scale_shape_manual(values=c(17,19),name="False Tracks",labels=c("Disagree","Agree"))+
             scale_size_manual(values=c(2,1),name="False Tracks",labels=c("Disagree","Agree"))+
             scale_alpha_manual(values=c(.7,.3),name="False Tracks",labels=c("Disagree","Agree"))

@@ -34,7 +34,7 @@
 #'  \item{alt: altitude of the sensor point}
 #'  \item{rangeToShip: range from target to ownship at the time of the sensor data point}
 #'  \item{targetAspect: target aspect (as seen from ownship) at the time of the sensor data point}
-#'  \item{meanlocation: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
+#'  \item{meanLocationError: (only in square and gauss window methods) mean distance between sensor point and target for all of the points included in the window}
 #'  \item{isFalseTrack: boolean indicating whether a point is outside the cutoff and therefore considered a false track}
 #'  \item{tgtXtrack: factor expressing the truthID.trackNum interaction}
 #'  \item{segmentNumber: an integer counting the number of times during which a single track is assigned to a particular target}
@@ -58,7 +58,7 @@ target_assignment.point <- function(targetTrackDistance, cutoff){
         ### that is considered a valid assignment (if it is greater that cutoff then the point will be marked as clutter)
         ##############################################################################################################
 
-        targetAssign = na.omit(targetTrackDistance) %>%
+        targetAssign = stats::na.omit(targetTrackDistance) %>%
                 # group by the radar point (i.e. if there are 4 truth targets, then each radar point will be replicated 4 times in pointIndex)
                 group_by(pointIndex) %>%
                 # find the smallest error for each set of pointIndex (e.g. if there are 4 targets, go through each individual radar point find which of the 4 has the smallest error and keep only that one)

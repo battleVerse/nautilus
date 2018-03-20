@@ -37,5 +37,12 @@ ggplot object
 This figure plots one of several choices for system error (location error, range error, bearing error) against the target aspect or the bearing to the target
 }
 \examples{
-plot_polar_error(scenarioMaker::example1_scenario \%>\% target_assignment("point",cutoff=100),angleTerm="bearing", rTerm = 'locationError',doFacet = TRUE, plotFalseTracks=FALSE)
+myScenario=scenarioMaker::example1_scenario \%>\%
+  target_assignment("point",cutoff=100)
+
+plot_polar_error(scenario=myScenario,
+ angleTerm="bearing",
+ rTerm = 'locationError',
+ doFacet = TRUE,
+ plotFalseTracks=FALSE)
 }
