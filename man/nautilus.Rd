@@ -3,7 +3,6 @@
 \docType{package}
 \name{nautilus}
 \alias{nautilus}
-\alias{nautilus-package}
 \title{NAUTILUS: A package for analyzing sensor system performance}
 \description{
 Hello, and welcome to NAUTILUS!

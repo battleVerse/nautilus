@@ -1,20 +1,20 @@
 Package: nautilus
 Type: Package
 Title: Automated track-to-truth assignment for sensor performance analysis
-Version: 1.2
+Version: 1.2.1
 Date: 2018-03-19
 Authors@R: c(
   person('Benjamin','Ashwell',email='bashwell@ida.org',role=c('cre','aut')),
   person('Kevin','Kirshenbaum',email='kkirshen@ida.org',role=c('aut'))
   )
-Description: Automated track-to-truth assignment for sensor performance analysis. Test update.
+Description: Automated track-to-truth assignment for sensor performance analysis.
 License: GPL-3
 Copyright: Institute for Defense Analyses
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 7.2.3
 Depends:
-    R (>= 3.0.2),
-    dplyr (>= 0.7)
+    R (>= 4.0),
+    dplyr (>= 1.0)
 Imports:
     ggplot2,
     shiny,

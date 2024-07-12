@@ -4,8 +4,12 @@
 \alias{plot_compare_track_status}
 \title{Compares the track status from different assignmentDatas}
 \usage{
-plot_compare_track_status(scenario1, scenario2, nameList = NA,
-  showFalseTracks = FALSE)
+plot_compare_track_status(
+  scenario1,
+  scenario2,
+  nameList = NA,
+  showFalseTracks = FALSE
+)
 }
 \arguments{
 \item{scenario1}{must contain track-to-truth assignments (the output of target_assignment()) and truthData}

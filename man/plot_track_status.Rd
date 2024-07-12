@@ -4,8 +4,13 @@
 \alias{plot_track_status}
 \title{Visualize when targets were tracked}
 \usage{
-plot_track_status(scenario, scalePoints = 1, textSize = 3,
-  showFalseTracks = TRUE, hideLegend = FALSE)
+plot_track_status(
+  scenario,
+  scalePoints = 1,
+  textSize = 3,
+  showFalseTracks = TRUE,
+  hideLegend = FALSE
+)
 }
 \arguments{
 \item{scenario}{MUST contain targetTruth and assignmentData (from target_assignment())}

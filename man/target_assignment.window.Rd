@@ -4,8 +4,12 @@
 \alias{target_assignment.window}
 \title{Target assignment (square window method) - DO NOT DIRECTLY CALL THIS FUNCTION}
 \usage{
-target_assignment.window(targetTrackDistance, cutoff, windowSize,
-  parallel = FALSE)
+target_assignment.window(
+  targetTrackDistance,
+  cutoff,
+  windowSize,
+  parallel = FALSE
+)
 }
 \arguments{
 \item{targetTrackDistance}{the output of target_track_distance()}

@@ -34,11 +34,11 @@ get_track_segments <- function(assignmentData){
         ### as a factor (it's a number)
         #########################################################################################
 
-        groupedData=assignmentData %>%
+        groupedData = assignmentData %>%
                 ungroup() %>%
                 arrange(trackNum,time) %>% #sort by trackNum, then within each track by times
-                mutate(tgtXtrack = interaction(trackNum,tgtAssigned), #make a cross term between trackNum and target - this is what we're watching to see when a new 'segment' starts
-                       segmentNumber = as.factor(cumsum(ifelse(tgtXtrack == lag(tgtXtrack, default = as.factor(0), n = 1), 0, 1)))) #if the line behind me is NOT the same (i.e. I'm a new segment), then increase the cumsum by 1 (I'm a new segment with a new number!)
+                mutate(tgtXtrack = as.character(interaction(trackNum,tgtAssigned)), #make a cross term between trackNum and target - this is what we're watching to see when a new 'segment' starts
+                       segmentNumber = as.factor(cumsum(ifelse(tgtXtrack == lag(tgtXtrack, default = "0", n = 1), 0, 1)))) #if the line behind me is NOT the same (i.e. I'm a new segment), then increase the cumsum by 1 (I'm a new segment with a new number!)
 
         return(groupedData)
 }

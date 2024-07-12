@@ -4,8 +4,13 @@
 \alias{plot_target_assignments}
 \title{Plot target assignments}
 \usage{
-plot_target_assignments(scenario, scalePoints = 1, textSize = 3,
-  showFalseTracks = TRUE, hideLegend = FALSE)
+plot_target_assignments(
+  scenario,
+  scalePoints = 1,
+  textSize = 3,
+  showFalseTracks = TRUE,
+  hideLegend = FALSE
+)
 }
 \arguments{
 \item{scenario}{MUST contain targetTruth and assignmentData (from target_assignment())}

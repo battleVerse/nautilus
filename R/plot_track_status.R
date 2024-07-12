@@ -32,10 +32,10 @@ plot_track_status= function(scenario, scalePoints=1, textSize = 3, showFalseTrac
         stop("This function is missing targetTruth data, though assignmentData exists. This shouldn't be possible.")
     }
 
-    assignmentData=scenario$assignmentData
-    truthData=scenario$targetTruth
+    assignmentData = scenario$assignmentData
+    truthData = scenario$targetTruth
 
-    coverageData=get_tracks_per_target(assignmentData, truthData)
+    coverageData = get_tracks_per_target(assignmentData, truthData)
 
     coverageData=coverageData %>%
         mutate(numTracksOnTarget=ifelse(numTracksOnTarget>2,2,numTracksOnTarget)) %>% #if greater than 2, make it 2 for plotting purposes

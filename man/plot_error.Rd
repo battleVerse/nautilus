@@ -4,9 +4,15 @@
 \alias{plot_error}
 \title{Plot [location error / bearing error / range error] by [range / time]}
 \usage{
-plot_error(scenario, rangeCutoff, xTerm = "rangeToShip",
-  yTerm = "locationError", colorTerm = "tgtAssigned", doFacet = FALSE,
-  plotFalseTracks = FALSE)
+plot_error(
+  scenario,
+  rangeCutoff,
+  xTerm = "rangeToShip",
+  yTerm = "locationError",
+  colorTerm = "tgtAssigned",
+  doFacet = FALSE,
+  plotFalseTracks = FALSE
+)
 }
 \arguments{
 \item{scenario}{MUST contain assignmentData (from target_assignment())}

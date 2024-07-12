@@ -4,8 +4,14 @@
 \alias{plot_polar_error}
 \title{Plot [location error / bearing error / range error] by [target aspect / bearing to target]}
 \usage{
-plot_polar_error(scenario, angleTerm = "bearing", rTerm = "locationError",
-  colorTerm = "tgtAssigned", doFacet = FALSE, plotFalseTracks = FALSE)
+plot_polar_error(
+  scenario,
+  angleTerm = "bearing",
+  rTerm = "locationError",
+  colorTerm = "tgtAssigned",
+  doFacet = FALSE,
+  plotFalseTracks = FALSE
+)
 }
 \arguments{
 \item{scenario}{MUST contain assignmentData (from target_assignment())}
