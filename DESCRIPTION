@@ -7,7 +7,7 @@ Authors@R: c(
   person('Benjamin','Ashwell',email='bashwell@ida.org',role=c('cre','aut')),
   person('Kevin','Kirshenbaum',email='kkirshen@ida.org',role=c('aut'))
   )
-Description: Automated track-to-truth assignment for sensor performance analysis.
+Description: Automated track-to-truth assignment for sensor performance analysis. Test update.
 License: GPL-3
 Copyright: Institute for Defense Analyses
 LazyData: TRUE
